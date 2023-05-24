@@ -10,8 +10,10 @@ namespace ecommerce_webapi.Mappings
     {
         public AutoMapperProfiles()
         {
-           // CreateMap<ProductUserReqDto, Product>().ReverseMap();
-      
+            CreateMap<Product, ProductUserReqDto>().ReverseMap();
+            CreateMap<Product, ProductSaveDto>().ReverseMap();
+
+
         }
     }
 }

@@ -18,10 +18,9 @@ namespace ecommerce_webapi.Models.DTO
 
         public double Offer { get; set; }
 
-        public Guid? CatID { get; set; }
+        public Guid? CategoryID { get; set; }
 
-        public Guid? ModelID { get; set; }
-
+        public Guid? ModelProductID { get; set; }
         public Guid? BrandID { get; set; }
         public Guid? UserAdded { get; set; }
 

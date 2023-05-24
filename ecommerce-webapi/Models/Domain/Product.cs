@@ -24,12 +24,12 @@ namespace ecommerce_webapi.Models.Domain
         public double Offer { get; set; }
 
         public virtual Category? Category { get; set; }
-        public Guid? CatID { get; set; }
+        public Guid? CategoryID { get; set; }
 
         public virtual ModelProduct? ModelProduct { get; set; }
-        public Guid? ModelID { get; set; }
+        public Guid? ModelProductID { get; set; }
 
-        public virtual Brand? ProductBrand { get; set; }
+        public virtual Brand? Brand { get; set; }
         public Guid? BrandID { get; set; }
 
         public Guid? EmployeeID { get; set; }

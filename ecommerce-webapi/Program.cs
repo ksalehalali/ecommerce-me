@@ -1,4 +1,5 @@
 using ecommerce_webapi.API.Data;
+using ecommerce_webapi.Mappings;
 using ecommerce_webapi.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +55,7 @@ builder.Services.AddScoped<IImageRepository, LocalImageRepository>();
 builder.Services.AddScoped<ISizesRepository, SQLSizesRepository>();
 builder.Services.AddScoped<IProductsRepository, ProductsRepository>();
 
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 var app = builder.Build();
 
