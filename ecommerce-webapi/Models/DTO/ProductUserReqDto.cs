@@ -30,8 +30,10 @@ namespace ecommerce_webapi.Models.DTO
 
         public virtual Brand? Brand { get; set; }
         public Guid? BrandID { get; set; }
-        
 
-   
+        public List<QuantityDto> Quantities { get; set; }
+
+
+
     }
 }

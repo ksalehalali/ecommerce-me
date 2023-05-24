@@ -54,6 +54,8 @@ builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddScoped<IImageRepository, LocalImageRepository>();
 builder.Services.AddScoped<ISizesRepository, SQLSizesRepository>();
 builder.Services.AddScoped<IProductsRepository, ProductsRepository>();
+builder.Services.AddScoped<IQuantityRepository, QuantityRepository>();
+
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 

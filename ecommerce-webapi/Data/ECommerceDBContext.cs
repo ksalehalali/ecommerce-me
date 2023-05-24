@@ -1,5 +1,6 @@
 ﻿
 using ecommerce_webapi.Models.Domain;
+using ecommerce_webapi.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace ecommerce_webapi.API.Data
@@ -20,6 +21,7 @@ namespace ecommerce_webapi.API.Data
         public DbSet<Color> Colors { get; set; }
         public DbSet<Quantity> Quantities { get; set; }
         public DbSet<Brand> Brands { get; set; }
+        public DbSet<ImagesUrls> imagesUrls { get; set; }
 
 
 

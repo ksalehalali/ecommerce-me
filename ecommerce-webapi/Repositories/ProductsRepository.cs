@@ -41,6 +41,7 @@ namespace ecommerce_webapi.Repositories
                 Category = productCat,
                 Offer = productSaveDto.Offer,
                 ModelProductID = productSaveDto.ModelProductID,
+                
 
             };
              //use domain model to create product
@@ -68,8 +69,16 @@ namespace ecommerce_webapi.Repositories
         {
             var products= await _dbContext.Products.Include("Brand").Include("ModelProduct").Include("Category").ToListAsync();
 
+            //conver to dto
+            var productsDto = mapper.Map<List<ProductUserReqDto>>(products);
+
+            foreach (var product in products)
+            {
+                
+            }
+
             //convert from model to dto
-            var productsDto = new List<ProductUserReqDto>();
+            var productsDto2 = new List<ProductUserReqDto>();
             foreach (var product in products)
             {
                //mapping domain model to dto

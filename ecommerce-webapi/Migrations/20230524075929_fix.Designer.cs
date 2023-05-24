@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ecommerce_webapi.API.Data;
 
@@ -11,9 +12,11 @@ using ecommerce_webapi.API.Data;
 namespace ecommerce_webapi.Migrations
 {
     [DbContext(typeof(ECommerceDBContext))]
-    partial class ECommerceDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230524075929_fix")]
+    partial class fix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,13 +25,13 @@ namespace ecommerce_webapi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ecommerce_webapi.Models.DTO.ImagesUrls", b =>
+            modelBuilder.Entity("ecommerce_webapi.Models.DTO.ImageUrlDto", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("QuantityId")
+                    b.Property<Guid?>("QuantityId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Url")
@@ -37,7 +40,9 @@ namespace ecommerce_webapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("imagesUrls");
+                    b.HasIndex("QuantityId");
+
+                    b.ToTable("ImageUrlDto");
                 });
 
             modelBuilder.Entity("ecommerce_webapi.Models.Domain.Brand", b =>
@@ -295,6 +300,13 @@ namespace ecommerce_webapi.Migrations
                     b.ToTable("Sizes");
                 });
 
+            modelBuilder.Entity("ecommerce_webapi.Models.DTO.ImageUrlDto", b =>
+                {
+                    b.HasOne("ecommerce_webapi.Models.Domain.Quantity", null)
+                        .WithMany("ImagesUrls")
+                        .HasForeignKey("QuantityId");
+                });
+
             modelBuilder.Entity("ecommerce_webapi.Models.Domain.Product", b =>
                 {
                     b.HasOne("ecommerce_webapi.Models.Domain.Brand", "Brand")
@@ -333,6 +345,11 @@ namespace ecommerce_webapi.Migrations
                     b.Navigation("Color");
 
                     b.Navigation("Size");
+                });
+
+            modelBuilder.Entity("ecommerce_webapi.Models.Domain.Quantity", b =>
+                {
+                    b.Navigation("ImagesUrls");
                 });
 #pragma warning restore 612, 618
         }
