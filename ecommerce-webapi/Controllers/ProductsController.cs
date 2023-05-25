@@ -17,9 +17,11 @@ namespace ecommerce_webapi.Controllers
             this.productsRepository = productsRepository;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllProducts([FromQuery]string? filterOn, [FromQuery]string? filterQuery )
+        public async Task<IActionResult> GetAllProducts([FromQuery]string? filterOn, [FromQuery]string? filterQuery ,
+            [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1000)
         {
-            var products =await productsRepository.GetProductsAsync(filterOn,filterQuery);
+            var products =await productsRepository.GetProductsAsync(filterOn,filterQuery, sortBy, isAscending ?? true,
+              pageNumber, pageSize);
             return Ok(products);
         }
         [HttpGet]

@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using ecommerce_webapi.API.Data;
+using ecommerce_webapi.Migrations;
 using ecommerce_webapi.Models.Domain;
 using ecommerce_webapi.Models.DTO;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -78,35 +80,57 @@ namespace ecommerce_webapi.Repositories
 
         }
 
-        public async Task<List<ProductUserReqDto>> GetProductsAsync( string? filterOn, string? filterQuery)
+        public async Task<List<ProductUserReqDto>> GetProductsAsync( string? filterOn, string? filterQuery,
+            string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 1000)
         {
             var products=  _dbContext.Products.Include("Brand").Include("ModelProduct").Include("Category").AsQueryable();
+
+           
 
             //filtering
             if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
             {
-                if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                bool isArabic = ContainsArabicCharacters(filterQuery);
+                bool isEnglish = ContainsEnglishCharacters(filterQuery);
+                if (isArabic)
                 {
-                    products = products.Where(x => x.Name_AR.Contains(filterQuery));
+                    if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                    {
+                        products = products.Where(x => x.Name_AR.Contains(filterQuery));
+                    }
                 }
+                else
+                {
+                    if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                    {
+                        products = products.Where(x => x.Name_EN.Contains(filterQuery));
+                    }
 
-               
-               
+                }
             }
 
-            //if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
-            //{
-            //    if (products.Count() == 0)
-            //    {
-            //        if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
-            //        {
-            //            products = products.Where(x => x.Name_EN.Contains(filterQuery));
-            //        }
-            //    }
-            //}
+            //Sorting
+            if (string.IsNullOrWhiteSpace(sortBy) == false)
+            {
+                if (sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    products = isAscending ? products.OrderBy(x => x.Name_EN) : products.OrderByDescending(x => x.Name_EN);
+                }
+                else if (sortBy.Equals("Price", StringComparison.OrdinalIgnoreCase))
+                {
+                    products = isAscending ? products.OrderBy(x => x.Price) : products.OrderByDescending(x => x.Price);
+                }
+            }
+
+           
 
             //mapping domain model to dto
             var productsDto = mapper.Map<List<ProductUserReqDto>>(products);
+            //Pagination
+            var skipResults = (pageNumber - 1) * pageSize;
+
+           productsDto =   productsDto.Skip(skipResults).Take(pageSize).ToList();
+
 
             foreach (var product in productsDto)
             {
@@ -126,6 +150,36 @@ namespace ecommerce_webapi.Repositories
 
             return productsDto;
 
+        }
+
+
+        //check lang
+        static bool ContainsArabicCharacters(string input)
+        {
+            foreach (char c in input)
+            {
+                // Check if the character falls within the Arabic Unicode range
+                if (c >= 0x0600 && c <= 0x06FF)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        static bool ContainsEnglishCharacters(string input)
+        {
+            foreach (char c in input)
+            {
+                // Check if the character falls within the English Unicode range
+                if ((c >= 0x0041 && c <= 0x005A) || (c >= 0x0061 && c <= 0x007A))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public async Task<ProductUserReqDto> UpdateProductAsync(Guid ID, ProductUpdateReqDto productUpdateReqDto)

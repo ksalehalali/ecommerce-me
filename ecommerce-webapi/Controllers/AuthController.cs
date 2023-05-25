@@ -66,6 +66,9 @@ namespace ecommerce_webapi.Controllers
                         var response = new LoginResponseDto
                         {
                             JwtToken = jwtToken,
+                            Roles = roles.ToArray(),
+                            UserName = loginReqDto.Username,
+
                         };
                         return Ok(response);
                     }
