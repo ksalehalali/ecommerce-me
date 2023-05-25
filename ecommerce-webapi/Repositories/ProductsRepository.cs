@@ -59,34 +59,70 @@ namespace ecommerce_webapi.Repositories
         {
 
             var product = await _dbContext.Products.Include("Brand").Include("ModelProduct").Include("Category").SingleOrDefaultAsync(x => x.id == id);
-   
+            if (product == null)
+            {
+                return null;
+            }
 
-            return mapper.Map<ProductUserReqDto>(product);
+            var productDto = mapper.Map<ProductUserReqDto>(product);
+            var productQuantites = await _dbContext.Quantities.Where(x => x.ProductId == product.id).Include("Color").Include("Size").ToListAsync();
+            var productQuantityDto = mapper.Map<List<QuantityDto>>(productQuantites);
+            foreach (var quantite in productQuantityDto)
+            {
+                var quantityImages = await _dbContext.imagesUrls.Where(x => x.QuantityId == quantite.Id).ToListAsync();
+                quantite.ImagesUrls = quantityImages;
+            }
+            productDto.Quantities = productQuantityDto;
+
+            return productDto;
 
         }
 
-        public async Task<List<ProductUserReqDto>> GetProductsAsync()
+        public async Task<List<ProductUserReqDto>> GetProductsAsync( string? filterOn, string? filterQuery)
         {
-            var products= await _dbContext.Products.Include("Brand").Include("ModelProduct").Include("Category").ToListAsync();
+            var products=  _dbContext.Products.Include("Brand").Include("ModelProduct").Include("Category").AsQueryable();
 
-            //conver to dto
+            //filtering
+            if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
+            {
+                if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    products = products.Where(x => x.Name_AR.Contains(filterQuery));
+                }
+
+               
+               
+            }
+
+            //if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
+            //{
+            //    if (products.Count() == 0)
+            //    {
+            //        if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+            //        {
+            //            products = products.Where(x => x.Name_EN.Contains(filterQuery));
+            //        }
+            //    }
+            //}
+
+            //mapping domain model to dto
             var productsDto = mapper.Map<List<ProductUserReqDto>>(products);
 
-            foreach (var product in products)
+            foreach (var product in productsDto)
             {
-                
+                var productQuantites = await _dbContext.Quantities.Where(x => x.ProductId == product.id).Include("Color").Include("Size").ToListAsync();
+                var productQuantityDto = mapper.Map<List<QuantityDto>>(productQuantites);
+                foreach (var quantite in productQuantityDto)
+                {
+                    var quantityImages = await _dbContext.imagesUrls.Where(x => x.QuantityId ==quantite.Id).ToListAsync();
+                    quantite.ImagesUrls = quantityImages;
+                }
+                product.Quantities = productQuantityDto;
+
             }
 
             //convert from model to dto
-            var productsDto2 = new List<ProductUserReqDto>();
-            foreach (var product in products)
-            {
-               //mapping domain model to dto
-                var productDto =mapper.Map<ProductUserReqDto>(product);
-                    
-              
-                productsDto.Add(productDto);
-            }
+       
 
             return productsDto;
 

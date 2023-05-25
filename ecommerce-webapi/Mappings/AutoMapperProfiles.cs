@@ -17,8 +17,6 @@ namespace ecommerce_webapi.Mappings
 
             CreateMap<ImagesUrls, ImagesUrlsSaveDto>().ReverseMap();
 
-
-
         }
     }
 }

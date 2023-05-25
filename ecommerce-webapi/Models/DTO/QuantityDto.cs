@@ -5,6 +5,7 @@ namespace ecommerce_webapi.Models.DTO
 {
     public class QuantityDto
     {
+        public Guid Id { get; set; }
         public Guid ProductId { get; set; }
         public int ItemsCount { get; set; }
         public Guid SizeId { get; set; }
