@@ -7,8 +7,10 @@ using System.Text.Json;
 
 namespace ecommerce_webapi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     public class ProductsController : ControllerBase
     {
         private readonly IProductsRepository productsRepository;
@@ -19,6 +21,9 @@ namespace ecommerce_webapi.Controllers
             this.productsRepository = productsRepository;
             this.logger = logger;
         }
+
+        //get all
+        [MapToApiVersion("1.0")]
         [HttpGet]
         public async Task<IActionResult> GetAllProducts([FromQuery]string? filterOn, [FromQuery]string? filterQuery ,
             [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1000)
@@ -28,8 +33,24 @@ namespace ecommerce_webapi.Controllers
               pageNumber, pageSize);
             logger.LogInformation($"finished Get All Products method with data: -------------------------{JsonSerializer.Serialize(products)} ");
 
+          
             return Ok(products);
         }
+
+        //Get All V2
+        [MapToApiVersion("2.0")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllProductsV2([FromQuery] string? filterOn, [FromQuery] string? filterQuery,
+           [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1000)
+        {
+            logger.LogInformation("Get All Products was invoked ------------------------- ");
+            var products = await productsRepository.GetProductsAsync(filterOn, filterQuery, sortBy, isAscending ?? true,
+              pageNumber, pageSize);
+            logger.LogInformation($"finished Get All Products method with data: -------------------------{JsonSerializer.Serialize(products)} ");
+
+            return Ok(products[0]);
+        }
+
         [HttpGet]
         [Route("id:Guid")]
         public async Task<IActionResult> GetProductById([FromQuery]Guid id)
