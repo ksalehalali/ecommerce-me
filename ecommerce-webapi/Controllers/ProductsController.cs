@@ -3,6 +3,7 @@ using ecommerce_webapi.Models.DTO;
 using ecommerce_webapi.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace ecommerce_webapi.Controllers
 {
@@ -11,17 +12,22 @@ namespace ecommerce_webapi.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductsRepository productsRepository;
+        private readonly ILogger<ProductsController> logger;
 
-        public ProductsController(IProductsRepository productsRepository)
+        public ProductsController(IProductsRepository productsRepository,ILogger<ProductsController> logger)
         {
             this.productsRepository = productsRepository;
+            this.logger = logger;
         }
         [HttpGet]
         public async Task<IActionResult> GetAllProducts([FromQuery]string? filterOn, [FromQuery]string? filterQuery ,
             [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1000)
         {
+            logger.LogInformation("Get All Products was invoked ------------------------- ");
             var products =await productsRepository.GetProductsAsync(filterOn,filterQuery, sortBy, isAscending ?? true,
               pageNumber, pageSize);
+            logger.LogInformation($"finished Get All Products method with data: -------------------------{JsonSerializer.Serialize(products)} ");
+
             return Ok(products);
         }
         [HttpGet]

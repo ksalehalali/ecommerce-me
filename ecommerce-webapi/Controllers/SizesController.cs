@@ -17,6 +17,7 @@ namespace ecommerce_webapi.Controllers
             this._sizesRepository = sizesRepository;
         }
         [HttpGet]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> GetAll()
         {
             //
