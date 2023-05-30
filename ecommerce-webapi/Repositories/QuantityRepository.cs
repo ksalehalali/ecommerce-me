@@ -84,6 +84,7 @@ namespace ecommerce_webapi.Repositories
             {
               quantityDto.Add(new QuantityDto
               {
+                  Id = item.Id,
                   ProductId = item.ProductId,
                   SizeId = item.SizeId,
                   ColorId = item.ColorId,
@@ -104,9 +105,26 @@ namespace ecommerce_webapi.Repositories
 
         public async Task<List<QuantityDto>> GetQuantitiesByProductId(Guid productId)
         {
-           var quantities = await dbContext.Quantities.Where(x =>x.ProductId == productId).ToListAsync();
+           var quantities = await dbContext.Quantities.Where(x =>x.ProductId == productId).Include("Size").Include("Color").ToListAsync();
 
-            return mapper.Map<List<QuantityDto>>(quantities);
+            var quantityDto = new List<QuantityDto>();
+            foreach (var item in quantities)
+            {
+                quantityDto.Add(new QuantityDto
+                {
+                    Id = item.Id,
+                    ProductId = item.ProductId,
+                    SizeId = item.SizeId,
+                    ColorId = item.ColorId,
+                    ItemsCount = item.ItemsCount,
+                    Size = item.Size,
+                    Color = item.Color,
+                    ImagesUrls = await dbContext.imagesUrls.Where(x => x.QuantityId == item.Id).ToListAsync(),
+
+                });
+            }
+
+            return mapper.Map<List<QuantityDto>>(quantityDto);
         }
 
         public Task<QuantityDto> Update(Guid id, QuantityDto quantity)

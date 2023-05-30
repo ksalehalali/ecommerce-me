@@ -22,6 +22,15 @@ namespace ecommerce_webapi.Controllers
             return Ok(quantities);
         }
 
+        [HttpGet]
+        [Route("GetByProductId")]
+        public async Task<IActionResult> GetByProductId(Guid productID)
+        {
+            var quantities =await quantityRepository.GetQuantitiesByProductId(productID);
+
+          return  Ok(quantities);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(QuantityUserDto quantity)
         {
