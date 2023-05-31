@@ -87,6 +87,8 @@ builder.Services.AddScoped<ISizesRepository, SQLSizesRepository>();
 builder.Services.AddScoped<IProductsRepository, ProductsRepository>();
 builder.Services.AddScoped<IQuantityRepository, QuantityRepository>();
 
+builder.Services.AddScoped<IBrandsRepository, BrandRepository>();
+builder.Services.AddScoped<IProductModelsRepository, ProductModelsRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 

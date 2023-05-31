@@ -1,4 +1,5 @@
-﻿using ecommerce_webapi.Repositories;
+﻿using ecommerce_webapi.Models.DTO;
+using ecommerce_webapi.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +19,15 @@ namespace ecommerce_webapi.Controllers
         public async Task<IActionResult> GetAll()
         {
             var brand = await _brandsRepository.GetAllAsync();
+            if(brand == null) { return NotFound(); }
+            return Ok(brand);
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody]BrandDto brandDto)
+        {
+            var brand =await _brandsRepository.CreateAsync(brandDto);
+            if(brand == null) { return BadRequest(); };
             return Ok(brand);
         }
     }

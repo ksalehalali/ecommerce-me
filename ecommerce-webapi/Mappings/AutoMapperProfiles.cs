@@ -16,6 +16,7 @@ namespace ecommerce_webapi.Mappings
             CreateMap<QuantityDto, QuantityUserDto>().ReverseMap();
 
             CreateMap<ImagesUrls, ImagesUrlsSaveDto>().ReverseMap();
+            CreateMap<Brand, BrandDto>().ReverseMap();
 
         }
     }

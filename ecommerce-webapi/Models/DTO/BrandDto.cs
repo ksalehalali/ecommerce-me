@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ecommerce_webapi.Models.Domain
+namespace ecommerce_webapi.Models.DTO
 {
-    public class Brand
+    public class BrandDto
     {
-        public Guid Id { get; set; }
         [Required]
         [MinLength(3, ErrorMessage = "has to be a minimum of 3 characters")]
         [MaxLength(100, ErrorMessage = "has to be a maximum of 100 characters")]
@@ -17,9 +15,6 @@ namespace ecommerce_webapi.Models.Domain
 
         public string Image { get; set; }
 
-        //[ForeignKey("EmployeeID")]
-        //public virtual ApplicationUser? ApplicationEmployee { get; set; }
-        //public string? EmployeeID { get; set; }
-
+        public Guid EmployeeId { get; set; }
     }
 }
